@@ -1,0 +1,3 @@
+#Ignores the output csv file and the amazon html file
+/*.csv
+/soupHTML.html
