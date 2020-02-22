@@ -5,6 +5,15 @@ from bs4 import BeautifulSoup as soup
 from urllib.request import urlopen as req 
 from urllib.request import FancyURLopener
 import csv
+import time
+from datetime import date, datetime
+import os
+
+
+timestamp = datetime.now()
+timeStamp_string = timestamp.strftime("%b-%d-%Y %H:%M:%S")
+
+print('timeStamp: '+timeStamp_string+'\n')
 
 class myOpener(FancyURLopener):
     version = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11)Gecko/20071127 Firefox/2.0.0.11'    #Replace the string with your user agent
@@ -37,16 +46,14 @@ soupHTML.close()
 
 
 # -------------Un-comment line below to save a CSV file with your scrapped data-------------#
-with open('TrendingStocksToday.csv', 'w', newline="", encoding='UTF-8') as csv_file:
+with open('../data/TrendingStocksToday.csv', 'w', newline="", encoding='UTF-8') as csv_file:
     writer = csv.writer(csv_file)
-    writer.writerow(['symbol', 'name', 'Last Price', 'Market Time', 'Change', '%Change', 'Volume', 'Avg Vol(3month)', 'Market Cap'])   #Fill in with the tags of the CSV#
-    reactid = 64
+    writer.writerow(['time stamp', 'symbol', 'name', 'Last Price', 'Market Time', 'Change', '%Change', 'Volume', 'Avg Vol(3month)', 'Market Cap'])   #Fill in with the tags of the CSV#
     for i in range(1,len(dataContainers)-1):
-        if i == 1:
-            reactid = 64
-        else:
-            reactid += 20
-        print(i)
+        if dataContainers[i].find('td', {'class':'data-col0 Ta(start) Pstart(6px) Pend(15px)'}).text == ':entitySlug':
+            print('this was i before: '+str(i))
+            i += 1
+            print("found entitySlug, i is: "+str(i))
         cSymbol = dataContainers[i].find('td', {'class':'data-col0 Ta(start) Pstart(6px) Pend(15px)'})
         print(cSymbol.text)
         cName = dataContainers[i].find('td', {'class':'data-col1 Ta(start) Pstart(10px) Miw(180px)'})
@@ -57,7 +64,7 @@ with open('TrendingStocksToday.csv', 'w', newline="", encoding='UTF-8') as csv_f
         print(cMarketTime.text)
         cChange = dataContainers[i].find('td', {'class':'data-col4 Ta(end) Pstart(20px)'})
         print(cChange.text)
-        cPercentChng = dataContainers[i].find('span', {'data-reactid':str(reactid)})
+        cPercentChng = dataContainers[i].find('span')
         print(cPercentChng.text)
         cVol = dataContainers[i].find('td', {'class':'data-col6 Ta(end) Pstart(20px)'})
         print(cVol.text)
@@ -65,6 +72,16 @@ with open('TrendingStocksToday.csv', 'w', newline="", encoding='UTF-8') as csv_f
         print(cAvgVol.text)
         cMarketCap = dataContainers[i].find('td', {'class':'data-col8 Ta(end) Pstart(20px)'})
         print(cMarketCap.text)
-        writer.writerow([cSymbol.text, cName.text, '$'+cLastPrice.text, cMarketTime.text, cChange.text, cPercentChng.text, cVol.text, cAvgVol.text, cMarketCap.text])
+        writer.writerow([timeStamp_string, cSymbol.text, cName.text, '$'+cLastPrice.text, cMarketTime.text, cChange.text, cPercentChng.text, cVol.text, cAvgVol.text, cMarketCap.text])
+
+with open('../data/allStoredStocks.csv', 'a', newline='', encoding='UTF-8') as csv_file:
+    writer = csv.writer(csv_file)
+    if os.stat('../data/allStoredStocks.csv').st_size == 0:
+        writer.writerow(['time stamp', 'symbol', 'name', 'Last Price', 'Market Time', 'Change', '%Change', 'Volume', 'Avg Vol(3month)', 'Market Cap'])   #Fill in with the tags of the CSV#
+    with open('../data/TrendingStocksToday.csv', 'r', newline='', encoding='UTF-8') as today_csv:
+        reader = csv.reader(today_csv)
+        next(reader)
+        for row in reader:
+            writer.writerow(row)
 
 
