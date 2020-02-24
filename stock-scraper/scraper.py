@@ -10,6 +10,15 @@ from datetime import date, datetime
 import os
 
 mySched = sched.scheduler(time.time, time.sleep)
+usrChoice = ""
+while True:
+    usrChoice = input('Enter "scrape" if you want to scrape and add to the current data or "clear" if you want to erase the current data: ')
+    if usrChoice == 'scrape' or usrChoice == 'clear':
+        break
+    else:
+        print('Please enter either "scrape" or "clear" to continue.')
+        continue
+
 
 def scrape():
     timestamp = datetime.now()
@@ -18,7 +27,7 @@ def scrape():
     print('timeStamp: '+timeStamp_string+'\n')
 
     class myOpener(FancyURLopener):
-        version = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11)Gecko/20071127 Firefox/2.0.0.11'    #Replace the string with your user agent
+        version = 'Mozilla/5.0 (compatible; U; ABrowse 0.6; Syllable) AppleWebKit/420+ (KHTML, like Gecko)'    #Replace the string with your user agent
 
     opener = myOpener()
 
@@ -83,6 +92,20 @@ def scrape():
                 writer.writerow(row)
     mySched.enter(12, 1, scrape)
 
+
+def clearCSV():
+    f = open('stock-scraper/data/allStoredStocks.csv', 'w+')
+    
+
+def execChoice(choice):
+    if choice == 'scrape':
+        scrape()
+    elif choice == 'clear':
+        clearCSV()
+    else:
+        print('Some error aoccured and neither scrape() nor clearCSV() could be called.')
+
+execChoice(usrChoice)
 mySched.enter(12, 1, scrape)
 mySched.run()
 
