@@ -53,7 +53,7 @@ def scrape():
 
 
     # -------------Un-comment line below to save a CSV file with your scrapped data-------------#
-    with open('stock-scraper/data/TrendingStocksToday.csv', 'w', newline="", encoding='UTF-8') as csv_file:
+    with open('../stock-scraper/data/TrendingStocksToday.csv', 'w', newline="", encoding='UTF-8') as csv_file:
         writer = csv.writer(csv_file)
         writer.writerow(['time stamp', 'symbol', 'name', 'Last Price', 'Market Time', 'Change', '%Change', 'Volume', 'Avg Vol(3month)', 'Market Cap'])   #Fill in with the tags of the CSV#
         for i in range(1,len(dataContainers)-1):
@@ -81,11 +81,11 @@ def scrape():
             print(cMarketCap.text)
             writer.writerow([timeStamp_string, cSymbol.text, cName.text, '$'+cLastPrice.text, cMarketTime.text, cChange.text, cPercentChng.text, cVol.text, cAvgVol.text, cMarketCap.text])
 
-    with open('stock-scraper/data/allStoredStocks.csv', 'a', newline='', encoding='UTF-8') as csv_file:
+    with open('../stock-scraper/data/allStoredStocks.csv', 'a', newline='', encoding='UTF-8') as csv_file:
         writer = csv.writer(csv_file)
-        if os.stat('stock-scraper/data/allStoredStocks.csv').st_size == 0:
+        if os.stat('../stock-scraper/data/allStoredStocks.csv').st_size == 0:
             writer.writerow(['time stamp', 'symbol', 'name', 'Last Price', 'Market Time', 'Change', '%Change', 'Volume', 'Avg Vol(3month)', 'Market Cap'])   #Fill in with the tags of the CSV#
-        with open('stock-scraper/data/TrendingStocksToday.csv', 'r', newline='', encoding='UTF-8') as today_csv:
+        with open('../stock-scraper/data/TrendingStocksToday.csv', 'r', newline='', encoding='UTF-8') as today_csv:
             reader = csv.reader(today_csv)
             next(reader)
             for row in reader:
